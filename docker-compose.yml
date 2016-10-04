@@ -17,6 +17,7 @@ services:
     image: php:fpm
     container_name: lemp_phpfpm
     restart: always
+    user: www-data
     volumes:
       - ./html:/var/www/html
     depends_on:

@@ -2,7 +2,7 @@ version: '2'
 services:
   nginx:
     image: nginx
-    container_name: lemp_nginx
+    container_name: nginx
     restart: always
     links:
       - phpfpm
@@ -15,28 +15,21 @@ services:
       - 443:443
   phpfpm:
     image: php:fpm
-    container_name: lemp_phpfpm
-    restart: always
-    user: www-data
-    volumes:
-      - ./html:/var/www/html
-    depends_on:
-      - db
-    links:
-      - db
-    environment:
-      - DB_NAME=lemp_bdd
-      - TABLE_PREFIX=lemp_
-      - DB_HOST=lemp
-      - DB_PASSWORD=password
-  db:
-    image: mariadb:latest
-    container_name: lemp_mariadb
+    container_name: phpfpm
     restart: always
     volumes:
-      - db-data:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-volumes:
-  db-data:
-    driver: local
+      #- ./html:/var/www/html
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+      - ./php/php-fpm.conf:/usr/local/etc/php/php-fpm.conf
+      - ./php/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    volumes_from:
+            - doc-symfony_app              
+  doc-symfony_app:
+    image: busybox
+    container_name: lep-doc-symfony_app
+    volumes:
+            #- /var/www/html/var/cache
+            #- /var/www/html/var/logs
+            #- /var/www/html/var/sessions
+       - ./html:/var/www/html
+    command: /bin/sh -c "chown -R www-data:www-data /var/www/html"

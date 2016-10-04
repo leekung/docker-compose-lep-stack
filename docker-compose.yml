@@ -1,11 +1,11 @@
 version: '2'
 services:
   nginx:
-    image: evild/alpine-nginx:1.9.15-openssl
+    image: nginx:mainline
     container_name: lemp_nginx
     restart: always
     links:
-      - php
+      - phpfpm
     volumes:
       - ./html:/var/www/html/:ro
       - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf:ro
@@ -13,9 +13,9 @@ services:
     ports:
       - 80:80
       - 443:443
-  php:
-    image: evild/alpine-php:7.0.6
-    container_name: lemp_php
+  phpfpm:
+    image: php:fpm
+    container_name: lemp_phpfpm
     restart: always
     volumes:
       - ./html:/var/www/html

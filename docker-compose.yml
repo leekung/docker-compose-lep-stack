@@ -29,6 +29,8 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
     volumes_from:
       - app
+    links:
+      - phpfpm
     ports:
       - 80
       - 443

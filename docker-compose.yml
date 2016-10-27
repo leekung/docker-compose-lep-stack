@@ -32,3 +32,5 @@ services:
     ports:
       - 80
       - 443
+    environment:
+      - VIRTUAL_HOST=whoami.local

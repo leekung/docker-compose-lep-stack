@@ -1,13 +1,32 @@
 version: '2'
 services:
 
+  app:
+    image: busybox
+    volumes:
+      - ./app:/var/www/html
+    command: /bin/bash -c "chown -R www-data:www-data /var/www/html"
+
+  phpfpm:
+    build: ./php/
+    restart: always
+    volumes:
+      - ./php/conf/php.ini:/usr/local/etc/php/php.ini
+      - ./php/conf/php-fpm.conf:/usr/local/etc/php/php-fpm.conf
+      - ./php/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    volumes_from:
+      - app
+    ports:
+      - 9000
+
   nginx:
-      build: ./nginx/
-      restart: always
-      volumes:
-        - ./app:/var/www/html/
-        - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf
-        - ./nginx/conf.d:/etc/nginx/conf.d
-      ports:
-        - 80
-        - 443
+    build: ./nginx/
+    restart: always
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    volumes_from:
+      - app
+    ports:
+      - 80
+      - 443

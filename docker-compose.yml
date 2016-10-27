@@ -1,47 +1,13 @@
 version: '2'
 services:
 
-  app-files:
-    image: busybox
-    container_name: app-files
-    volumes:
-      - ./html:/var/www/html
-    command: /bin/bash -c "chown -R www-data:www-data /var/www/html"
-
-  composer:
-    image: composer/composer
-    container_name: composer
-    volumes_from:
-        - app-files
-    command: install -d /var/www/html
-    command: update -d /var/www/html
-
-  phpfpm:
-    build: ./php/
-    container_name: phpfpm
-    restart: always
-    volumes:
-      - ./php/php.ini:/usr/local/etc/php/php.ini
-      - ./php/php-fpm.conf:/usr/local/etc/php/php-fpm.conf
-      - ./php/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
-    volumes_from:
-      - app-files
-
   nginx:
       build: ./nginx/
-      container_name: nginx
       restart: always
-      links:
-        - phpfpm
-        - redis
       volumes:
-        - ./html:/var/www/html/
+        - ./app:/var/www/html/
         - ./nginx/conf/nginx.conf:/etc/nginx/conf/nginx.conf
         - ./nginx/conf.d:/etc/nginx/conf.d
       ports:
-        - 80:80
-        - 443:443
-
-  redis:
-      image: redis
-      container_name: docker-redis
+        - 80
+        - 443
